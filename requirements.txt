@@ -180,3 +180,4 @@ yarg==0.1.9
 yarl==1.8.2
 zipp==3.11.0
 zope.interface==5.4.0
+mintlemon-turkish-nlp==0.2.1
