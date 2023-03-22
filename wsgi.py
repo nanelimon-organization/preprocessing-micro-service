@@ -1,5 +1,16 @@
 from fastapi import FastAPI
 from api import router
+from fastapi.middleware.cors import CORSMiddleware
+
+
+def make_middleware(app: FastAPI):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"]
+    )
 
 
 def init_routers(app: FastAPI) -> None:
@@ -27,12 +38,13 @@ def create_app() -> FastAPI:
     app : FastAPI
         The FastAPI instance.
     """
+
     app = FastAPI(
         title="Preprocessing Micro Service",
-        description="Preprocessing Micro Service",
-        version="0.1.0",
+        version="0.1.1",
     )
     init_routers(app)
+    make_middleware(app)
     return app
 
 

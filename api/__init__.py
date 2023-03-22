@@ -7,5 +7,5 @@ router = APIRouter()
 router.include_router(
     preprocessing_router,
     prefix="/preprocessing",
-    tags=["Preprocessing"]
+    tags=["API endpoints for text preprocessing using Mintlemon Turkish NLP library."]
 )
