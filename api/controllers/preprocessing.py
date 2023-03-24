@@ -22,6 +22,22 @@ class Item(BaseModel):
         return v
 
 
+class Items(BaseModel):
+    """
+    Input model for preprocessor API.
+    """
+    texts: List[str]
+
+    @validator('texts')
+    def text_not_empty(cls, v):
+        """
+        Validator to ensure that text is not empty or contain only whitespace.
+        """
+        if len(v) == 0:
+            raise ValueError('Text cannot be empty or contain only whitespace')
+        return v
+
+
 @preprocessing_router.post("/single_preprocess", response_model=dict)
 async def preprocessor(item: Item, turkish_char: bool):
     """
@@ -58,7 +74,7 @@ async def preprocessor(item: Item, turkish_char: bool):
 
 
 @preprocessing_router.post("/bulk_preprocess", response_model=dict)
-async def bulk_preprocess(texts: List[str], turkish_char: bool):
+async def bulk_preprocess(items: Items, turkish_char: bool):
     """
     Preprocess multiple texts using Mintlemon Turkish NLP library.
 
@@ -69,8 +85,8 @@ async def bulk_preprocess(texts: List[str], turkish_char: bool):
 
     Parameters
     ----------
-    texts : List[str]
-        The list of texts to be preprocessed.
+     items : Items
+        The list of texts to be preprocessed. Items : List[str]
     turkish_char : bool
         If True, supported Turkish characters will be used, otherwise only ASCII characters will be used.
 
@@ -87,7 +103,7 @@ async def bulk_preprocess(texts: List[str], turkish_char: bool):
     """
     try:
         results = []
-        for text in texts:
+        for text in items.texts:
             preprocessor = DataPreprocessor(text, supported_turkish_chars=turkish_char)
             result = preprocessor.preprocess()
             results.append(result)
