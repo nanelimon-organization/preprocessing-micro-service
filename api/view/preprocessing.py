@@ -156,7 +156,7 @@ class DataPreprocessor:
 
         """
         if len(str(self.text)) < min_len:
-            self.text = None
+            self.text = " "
 
     def preprocess(self) -> str:
         """
