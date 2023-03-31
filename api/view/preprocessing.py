@@ -128,7 +128,7 @@ class DataPreprocessor:
         """
         preprocessed_text = Normalizer.remove_accent_marks(self.text)
         preprocessed_text = Normalizer.remove_punctuations(preprocessed_text)
-        if self.supported_turkish_chars:
+        if not self.supported_turkish_chars:
             preprocessed_text = Normalizer.normalize_turkish_chars(preprocessed_text)
         # preprocessed_text = Normalizer.deasciify(preprocessed_text)
         self.text = Normalizer.lower_case(preprocessed_text)
