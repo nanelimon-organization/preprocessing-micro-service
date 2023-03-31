@@ -174,6 +174,8 @@ class DataPreprocessor:
             Whether to normalize numeric text or not. Default is True.
         remove_short_text : bool, optional
             Whether to remove short text or not. Default is True.
+        mintelmon_preprocessing : bool, optional
+            Whether to apply mintlemon preprocessing or not. Default is True.
         min_len : int, optional
             The minimum length threshold for text values to be considered valid. Default is 5.
 
