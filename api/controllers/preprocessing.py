@@ -39,7 +39,7 @@ class Items(BaseModel):
 
 
 @preprocessing_router.post("/single_preprocess", response_model=dict)
-async def preprocessor(item: Item, turkish_char: bool = True, 
+async def single_preprocess(item: Item, turkish_char: bool = True, 
                        offensive_contractions: bool = True, 
                        numeric_text_normalization: bool = True, 
                        remove_short_text: bool = True, 
