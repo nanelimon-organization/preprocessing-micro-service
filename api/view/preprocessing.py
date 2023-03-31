@@ -128,7 +128,7 @@ class DataPreprocessor:
         """
         preprocessed_text = Normalizer.remove_accent_marks(self.text)
         preprocessed_text = Normalizer.remove_punctuations(preprocessed_text)
-        if not self.supported_turkish_chars:
+        if self.supported_turkish_chars:
             preprocessed_text = Normalizer.normalize_turkish_chars(preprocessed_text)
         # preprocessed_text = Normalizer.deasciify(preprocessed_text)
         self.text = Normalizer.lower_case(preprocessed_text)
@@ -158,9 +158,24 @@ class DataPreprocessor:
         if len(str(self.text)) < min_len:
             self.text = " "
 
-    def preprocess(self) -> str:
+    def preprocess(self, offensive_contractions: bool = True, 
+                numeric_text_normalization: bool = True, 
+                remove_short_text: bool = True, 
+                mintelmon_preprocessing: bool = True,
+                min_len: int = 5) -> str:
         """
-        Apply all preprocessing steps to the request text and response the preprocessed text.
+        Apply preprocessing steps to the request text and return the preprocessed text.
+
+        Parameters
+        ----------
+        offensive_contractions : bool, optional
+            Whether to replace offensive contractions or not. Default is True.
+        numeric_text_normalization : bool, optional
+            Whether to normalize numeric text or not. Default is True.
+        remove_short_text : bool, optional
+            Whether to remove short text or not. Default is True.
+        min_len : int, optional
+            The minimum length threshold for text values to be considered valid. Default is 5.
 
         Returns
         -------
@@ -169,17 +184,16 @@ class DataPreprocessor:
 
         Notes
         -----
-        This method applies all the preprocessing steps to the input text in the following order:
-        1. Replace offensive contractions.
-        2. Mintlemon data preprocessing.
-        3. Normalize numeric text.
-        4. Remove short text.
-
-        Returns the preprocessed text.
+        This method applies preprocessing steps to the input text based on the specified parameters.
         """
-        self.convert_offensive_contractions()
-        self.mintlemon_data_preprocessing()
-        self.normalize_numeric_text()
-        self.remove_short_text()
+        if offensive_contractions:
+            self.convert_offensive_contractions()
+        if mintelmon_preprocessing:
+            self.mintlemon_data_preprocessing()
+        if numeric_text_normalization:
+            self.normalize_numeric_text()
+        if remove_short_text:
+            self.remove_short_text(min_len=min_len)
 
         return self.text
+

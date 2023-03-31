@@ -39,7 +39,12 @@ class Items(BaseModel):
 
 
 @preprocessing_router.post("/single_preprocess", response_model=dict)
-async def preprocessor(item: Item, turkish_char: bool):
+async def preprocessor(item: Item, turkish_char: bool = True, 
+                       offensive_contractions: bool = True, 
+                       numeric_text_normalization: bool = True, 
+                       remove_short_text: bool = True, 
+                       mintelmon_preprocessing: bool = True,
+                       min_len: int = 5):
     """
     Preprocess text using Mintlemon Turkish NLP library.
 
@@ -51,8 +56,18 @@ async def preprocessor(item: Item, turkish_char: bool):
     ----------
     item : Item
         The input text to be preprocessed.
-    turkish_char : bool
-        If True, supported Turkish characters will be used, otherwise only ASCII characters will be used.
+    turkish_char : bool, optional
+        If True, supported Turkish characters will be used, otherwise only ASCII characters will be used. Default is True.
+    offensive_contractions : bool, optional
+        Whether to replace offensive contractions or not. Default is True.
+    numeric_text_normalization : bool, optional
+        Whether to normalize numeric text or not. Default is True.
+    remove_short_text : bool, optional
+        Whether to remove short text or not. Default is True.
+    mintelmon_preprocessing : bool, optional
+        Whether to apply Mintlemon Turkish NLP library preprocessing steps or not. Default is True.
+    min_len : int, optional
+        The minimum length threshold for text values to be considered valid. Default is 5.
 
     Returns
     -------
@@ -67,14 +82,23 @@ async def preprocessor(item: Item, turkish_char: bool):
     """
     try:
         preprocessor = DataPreprocessor(item.text, supported_turkish_chars=turkish_char)
-        result = preprocessor.preprocess()
+        result = preprocessor.preprocess(offensive_contractions=offensive_contractions, 
+                                         numeric_text_normalization=numeric_text_normalization, 
+                                         remove_short_text=remove_short_text, 
+                                         mintelmon_preprocessing=mintelmon_preprocessing,
+                                         min_len=min_len)
         return {"result": result}
     except Exception as ex:
         raise HTTPException(status_code=400, detail=f'Error processing text: {ex}')
 
 
 @preprocessing_router.post("/bulk_preprocess", response_model=dict)
-async def bulk_preprocess(items: Items, turkish_char: bool):
+async def bulk_preprocess(items: Items, turkish_char: bool = True, 
+                          offensive_contractions: bool = True, 
+                          numeric_text_normalization: bool = True, 
+                          remove_short_text: bool = True, 
+                          mintelmon_preprocessing: bool = True,
+                          min_len: int = 5):
     """
     Preprocess multiple texts using Mintlemon Turkish NLP library.
 
@@ -87,8 +111,18 @@ async def bulk_preprocess(items: Items, turkish_char: bool):
     ----------
      items : Items
         The list of texts to be preprocessed. Items : List[str]
-    turkish_char : bool
-        If True, supported Turkish characters will be used, otherwise only ASCII characters will be used.
+    turkish_char : bool, optional
+        If True, supported Turkish characters will be used, otherwise only ASCII characters will be used. Default is True.
+    offensive_contractions : bool, optional
+        Whether to replace offensive contractions or not. Default is True.
+    numeric_text_normalization : bool, optional
+        Whether to normalize numeric text or not. Default is True.
+    remove_short_text : bool, optional
+        Whether to remove short text or not. Default is True.
+    mintelmon_preprocessing : bool, optional
+        Whether to apply Mintlemon Turkish NLP library preprocessing steps or not. Default is True.
+    min_len : int, optional
+        The minimum length threshold for text values to be considered valid. Default is 5.
 
     Returns
     -------
@@ -105,9 +139,12 @@ async def bulk_preprocess(items: Items, turkish_char: bool):
         results = []
         for text in items.texts:
             preprocessor = DataPreprocessor(text, supported_turkish_chars=turkish_char)
-            result = preprocessor.preprocess()
+            result = preprocessor.preprocess(offensive_contractions=offensive_contractions, 
+                                             numeric_text_normalization=numeric_text_normalization, 
+                                             remove_short_text=remove_short_text,
+                                             mintelmon_preprocessing=mintelmon_preprocessing,
+                                             min_len=min_len)
             results.append(result)
         return {"result": results}
     except Exception as ex:
         raise HTTPException(status_code=400, detail=f'Error processing text: {ex}')
-
