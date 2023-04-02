@@ -136,13 +136,14 @@ class DataPreprocessor:
         return self.text
     
 
-    def remove_short_text(self, min_len: int = 5) -> None:
+
+    def remove_short_text(self, min_len = None) -> None:
         """
         Remove short text values from the input text based on a minimum length threshold.
 
         Parameters
         ----------
-        min_len : int, optional (default=5)
+        min_len : int, optional (default=None)
             The minimum length threshold for text values to be considered valid.
 
         Returns
@@ -155,8 +156,13 @@ class DataPreprocessor:
         specified minimum length threshold.
 
         """
-        if len(str(self.text)) < min_len:
-            self.text = " "
+        try:
+            if not (min_len == None) or (min_len == 0):
+                if len(str(self.text)) < int(min_len):
+                    self.text = ""
+        except Exception as e:
+            print(e)
+
 
     def preprocess(self, offensive_contractions: bool = True, 
                 numeric_text_normalization: bool = True, 
@@ -190,12 +196,11 @@ class DataPreprocessor:
         """
         if offensive_contractions:
             self.convert_offensive_contractions()
+        if remove_short_text:
+            self.remove_short_text(min_len=min_len)
         if mintelmon_preprocessing:
             self.mintlemon_data_preprocessing()
         if numeric_text_normalization:
             self.normalize_numeric_text()
-        if remove_short_text:
-            self.remove_short_text(min_len=min_len)
 
         return self.text
-
