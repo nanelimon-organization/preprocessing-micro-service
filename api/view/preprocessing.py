@@ -166,7 +166,6 @@ class DataPreprocessor:
 
     def preprocess(self, offensive_contractions: bool = True, 
                 numeric_text_normalization: bool = True, 
-                remove_short_text: bool = True, 
                 mintelmon_preprocessing: bool = True,
                 min_len: int = 5) -> str:
         """
@@ -178,12 +177,10 @@ class DataPreprocessor:
             Whether to replace offensive contractions or not. Default is True.
         numeric_text_normalization : bool, optional
             Whether to normalize numeric text or not. Default is True.
-        remove_short_text : bool, optional
-            Whether to remove short text or not. Default is True.
         mintelmon_preprocessing : bool, optional
             Whether to apply mintlemon preprocessing or not. Default is True.
         min_len : int, optional
-            The minimum length threshold for text values to be considered valid. Default is 5.
+            The minimum length threshold for text values to be considered valid. Default is None.
 
         Returns
         -------
@@ -196,11 +193,8 @@ class DataPreprocessor:
         """
         if offensive_contractions:
             self.convert_offensive_contractions()
-        if remove_short_text:
-            self.remove_short_text(min_len=min_len)
         if mintelmon_preprocessing:
             self.mintlemon_data_preprocessing()
         if numeric_text_normalization:
             self.normalize_numeric_text()
-
         return self.text
