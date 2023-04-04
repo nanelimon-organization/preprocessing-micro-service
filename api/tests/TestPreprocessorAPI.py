@@ -59,7 +59,16 @@ def test_preprocess_remove_spaces(client):
 
 def test_preprocess_remove_numbers(client):
     input_text = {"texts": ["Merhaba Dünya, 2022 yılında Python 4.0 sürümü çıktı mı?"]}
-    params = {"remove_numbers": True}
+    params = {
+        "tr_chars": False,
+        "acc_marks": False,
+        "punct": False,
+        "lower": False,
+        "offensive": False,
+        "norm_numbers": False,
+        "remove_spaces": False,
+        "remove_numbers": True,
+    }
     response = client.post("/preprocess", json=input_text, json=params)
     assert response.status_code == 200
     assert response.json() == {
