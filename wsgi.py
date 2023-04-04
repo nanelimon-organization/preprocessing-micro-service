@@ -41,7 +41,7 @@ def create_app() -> FastAPI:
 
     app = FastAPI(
         title="Preprocessing Micro Service",
-        version="0.1.1",
+        version="0.1.2",
     )
     init_routers(app)
     make_middleware(app)

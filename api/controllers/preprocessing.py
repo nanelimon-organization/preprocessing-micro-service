@@ -26,36 +26,41 @@ class Items(BaseModel):
 @preprocessing_router.post("/preprocess", response_model=dict)
 async def preprocess(
     items: Items,
-    turkish_char: bool = True,
-    offensive_contractions: bool = True,
-    numeric_text_normalization: bool = True,
-    mintelmon_preprocessing: bool = True,
-    min_len= None,
+    tr_chars: bool = True,
+    acc_marks: bool = True,
+    punct: bool = True,
+    lower: bool = True,
+    offensive: bool = True,
+    norm_numbers: bool = True,
+    remove_numbers: bool = False,
+    remove_spaces: bool = True,
 ):
     """
     Preprocess multiple texts using Mintlemon Turkish NLP library.
 
-    - This API takes in a list of texts and applies various preprocessing steps including offensive contraction replacement, Turkish character normalization, numeric text normalization, lowercase conversion and short text removal.
+    - This API takes in a list of texts and applies various preprocessing steps including offensive contraction replacement, Turkish character normalization, numeric text normalization, lowercase conversion and etc..
+
 
     Parameters
     ----------
-    * item : Item
-        - The input text to be preprocessed.
-
-    * turkish_char : bool, optional
-        - If True, supported Turkish characters will be used, otherwise only ASCII characters will be used. Default is True.
-
-    * offensive_contractions : bool, optional
-        - Whether to replace offensive contractions or not. Default is True.
-
-    * numeric_text_normalization : bool, optional
-        - Whether to normalize numeric text or not. Default is True.
-
-    * mintelmon_preprocessing : bool, optional
-        - Whether to apply Mintlemon Turkish NLP library preprocessing steps or not. Default is True.
-
-    * min_len : optional default = None
-        - The minimum length threshold for text values to be considered valid. Default is None.
+    * items : Items
+        - A Pydantic model for a list of input text values to be preprocessed.
+    * tr_chars : bool, optional
+        - Flag indicating whether to normalize Turkish characters, by default True.
+    * acc_marks : bool, optional
+        - Flag indicating whether to remove accent marks from text, by default True.
+    * punct : bool, optional
+        - Flag indicating whether to remove punctuation marks from text, by default True.
+    * lower : bool, optional
+        - Flag indicating whether to convert text to lowercase, by default True.
+    * offensive : bool, optional
+        - Flag indicating whether to convert offensive contractions to their original form, by default True.
+    * norm_numbers : bool, optional
+        - Flag indicating whether to convert numeric text to its normalized form, by default True.
+    * remove_numbers : bool, optional
+        - Flag indicating whether to remove numeric text from the input text values, by default False.
+    * remove_spaces : bool, optional
+        - Flag indicating whether to remove extra spaces from the input text values, by default True.
 
     Returns
     -------
@@ -70,12 +75,18 @@ async def preprocess(
     try:
         results = []
         for text in items.texts:
-            preprocessor = DataPreprocessor(text, supported_turkish_chars=turkish_char)
+            preprocessor = DataPreprocessor(
+                text,
+                supported_turkish_chars=tr_chars,
+                remove_accent_marks=acc_marks,
+                remove_punctuations=punct,
+                lowercase=lower,
+                remove_numbers=remove_numbers,
+                remove_more_space=remove_spaces,
+            )
             result = preprocessor.preprocess(
-                offensive_contractions=offensive_contractions,
-                numeric_text_normalization=numeric_text_normalization,
-                mintelmon_preprocessing=mintelmon_preprocessing,
-                min_len=min_len,
+                offensive_contractions=offensive,
+                numeric_text_normalization=norm_numbers,
             )
             results.append(result)
         return {"result": results}
