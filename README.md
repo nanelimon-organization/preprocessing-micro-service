@@ -9,6 +9,41 @@ Preprocessing Micro Service - Mintlemon Turkish NLP kütüphanesi kullanılarak 
 
 Ayrıca, FastAPI kullanılarak oluşturulan bir API tarafından desteklenmektedir. API, tek bir metin veya birden fazla metin içeren bir liste alır ve her metin için belirtilen ön işleme adımlarını uygular. API'nin `preprocess` endpoint'i, birden fazla metni aynı anda işlemek için kullanılır ve sonuçları JSON formatında döndürür.
 
+## Gereksinimler
+
+### Ortam
+
+Lütfen Python sürümünüzü `3.10` olarak ayarlayın:
+
+```bash
+python --version
+```
+
+- Virtualenv kurulumu:
+```bash
+pip install virtualenv
+```
+- Virtualenv oluşturma:
+```bash
+virtualenv venv
+```
+- Virtualenv'i aktif hale getirme:
+```bash
+source venv/bin/activate
+```
+- Kütüphanelerin kurulumu:
+```bash
+pip install -r requirements.txt
+```
+
+## Uygulamayı Çalıştırma
+
+```python
+python main.py
+```
+
+--- 
+
 ### Veri Ön İşleme Fonksiyonları
 
 Aşağıda verilen fonksiyonlar ile bu servis veri ön işleme adımlarını gerçekleştirmektedir:
@@ -96,6 +131,22 @@ def preprocess_text(texts, tr_chars=False, acc_marks=True, punct=True, lower=Tru
 
 ## API Kullanımı | Örnek Çıktı: 
 
+```python
+texts = ["Merhaba dünya! Bu bir örnek cümledir.", "Python öğrenmek çok keyifli."]
+preprocessed_texts = preprocess_text(texts, 
+                                    tr_chars=False, 
+                                    acc_marks=True, 
+                                    punct=True, 
+                                    lower=True, 
+                                    offensive=True, 
+                                    norm_numbers=True, 
+                                    remove_numbers=False, 
+                                    remove_spaces=True, 
+                                    remove_stopwords=True, 
+                                    min_len=4)
+print(preprocessed_texts)
+```
+
 ```bash
 ['merhaba dünya örnek cümledir', 'python öğrenmek keyifli']
 ```
@@ -106,7 +157,11 @@ def preprocess_text(texts, tr_chars=False, acc_marks=True, punct=True, lower=Tru
 
 <img width="1423" alt="Ekran Resmi 2023-04-04 08 04 12" src="https://user-images.githubusercontent.com/83168207/229692297-c4f6f88c-36f5-49e6-8c16-1caf8b234d55.png">
 
-<img width="1407" alt="Ekran Resmi 2023-04-04 08 08 41" src="https://user-images.githubusercontent.com/83168207/229692532-df18615f-dc36-466c-96a1-e65ef7112d4e.png">
+
+
+  İstek Gövdesi - Boş      |  Yanıt Gövdesi - Örnek
+:-------------------------:|:-------------------------:
+<img width="1407" alt="Ekran Resmi 2023-04-04 08 08 41" src="https://user-images.githubusercontent.com/83168207/229692532-df18615f-dc36-466c-96a1-e65ef7112d4e.png">| <img width="1581" alt="Ekran Resmi 2023-04-04 08 35 38" src="https://user-images.githubusercontent.com/83168207/229697301-92c3d03c-8f3a-4f27-9fa4-2dcca735a257.png">
 
 
 ---
@@ -115,36 +170,5 @@ def preprocess_text(texts, tr_chars=False, acc_marks=True, punct=True, lower=Tru
 
 Sonuç olarak, Preprocessing Service, Türkçe metinlerin veri ön işleme adımlarından geçirilmesini sağlayarak doğru ve tutarlı bir şekilde analiz edilmelerine olanak tanır. API, tek bir metin veya birden fazla metin içeren bir liste alarak her metin için belirtilen ön işleme adımlarını uygulayarak sonucu JSON formatında döndürür. Ayrıca, API'nin sunduğu parametreler, kullanıcıların veri ön işleme adımlarını esnek bir şekilde yapılandırmasına olanak tanır.
 
-
-## Prerequisites
-
-### Environment
-
-Please set up your Python version to `3.10`
-
-```bash
-python --version
-```
-- Install Virtualenviroment
-```bash
-pip install virtualenv
-```
-- Create the virtualenv
-```bash
-virtualenv venv
-```
-- Activate the venv
-```bash
-source venv/bin/activate
-```
-- Install libraries
-```bash
-pip install -r requirements.txt
-```
-
-## Run App
-
-```python
-python main.py
-```
+---
 
