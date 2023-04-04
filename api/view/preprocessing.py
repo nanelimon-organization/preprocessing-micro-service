@@ -31,6 +31,7 @@ class DataPreprocessor:
         lowercase: bool,
         remove_numbers: bool,
         remove_more_space: bool,
+        remove_stopwords: bool,
     ):
         self.text = text
         with open("api/static/documents/sw_words.json", "r") as f:
@@ -42,6 +43,7 @@ class DataPreprocessor:
         self.lowercase = lowercase
         self.remove_numbers = remove_numbers
         self.remove_more_space = remove_more_space
+        self.remove_stopwords = remove_stopwords
 
     def convert_offensive_contractions(self) -> str:
         """
@@ -61,9 +63,7 @@ class DataPreprocessor:
         --------
         >>> text = "doğduğun günün aq"
         >>> convert_offensive_contractions(text)
-
-        output:
-        doğduğun günün amına koyayım
+        "doğduğun günün amına koyayım"
         """
         text_list = [
             self.words_sw[word] if word in self.words_sw else word
@@ -128,12 +128,14 @@ class DataPreprocessor:
 
         Notes
         -----
-        This method applies the following preprocessing steps to the text:
-        1. Remove accent marks.
-        2. Remove all punctuations.
-        3. Normalize Turkish characters (if enabled).
-        4. Deasciify.
-        5. Convert all characters to lowercase.
+        This method applies the following preprocessing steps to the input text:
+        1. Remove accent marks
+        2. Remove punctuations
+        3. Normalize Turkish characters
+        4. Remove numbers
+        5. Remove extra spaces
+        6. Remove stop words
+        7. Convert text to lowercase
 
         Mintlemon Turkish NLP library is used to perform the preprocessing steps.
 
@@ -151,48 +153,54 @@ class DataPreprocessor:
             self.text = Normalizer.remove_numbers(self.text)
         if self.remove_more_space:
             self.text = Normalizer.remove_more_space(self.text)
+        if self.remove_stopwords:
+            self.text = Normalizer.remove_stopwords(self.text)
         # preprocessed_text = Normalizer.deasciify(preprocessed_text)
         if self.lowercase:
             self.text = Normalizer.lower_case(self.text)
 
         return self.text
 
-    # def remove_short_text(self, min_len = None) -> None:
-    #     """
-    #     Remove short text values from the input text based on a minimum length threshold.
+    def remove_short_text(self, min_len=None) -> None:
+        """
+        Remove short text values from the input text based on a minimum length threshold.
 
-    #     Parameters
-    #     ----------
-    #     min_len : int, optional (default=None)
-    #         The minimum length threshold for text values to be considered valid.
+        Parameters
+        ----------
+        min_len : int, optional (default=None)
+            The minimum length threshold for text values to be considered valid.
 
-    #     Returns
-    #     -------
-    #     None
+        Returns
+        -------
+        None
 
-    #     Notes
-    #     -----
-    #     This method removes the short text values from the input text where the length of the text value is less than the
-    #     specified minimum length threshold.
-
-    #     """
-    #     try:
-    #         if not (min_len == None) or (min_len == 0):
-    #             if len(str(self.text)) < int(min_len):
-    #                 self.text = ""
-    #     except Exception as e:
-    #         print(e)
+        Notes
+        -----
+        This method removes the short text values from the input text where the length of the text value is less than the
+        specified minimum length threshold.
+        """
+        try:
+            if not (min_len == None) or (min_len == 0):
+                if len(str(self.text)) < int(min_len):
+                    self.text = ""
+        except Exception as e:
+            print(e)
 
     def preprocess(
         self,
-        offensive_contractions: bool = True,
-        numeric_text_normalization: bool = True,
+        offensive_contractions: bool,
+        numeric_text_normalization: bool,
+        min_len_short_text: int,
     ) -> str:
         """
         Apply preprocessing steps to the request text and return the preprocessed text.
 
         Parameters
         ----------
+        remove_short_text : bool, optional
+            Whether to remove short text or not. Default is True.
+        min_len_short_text : int, optional
+            The minimum length threshold for text values to be considered valid. Default is 3.
         offensive_contractions : bool, optional
             Whether to replace offensive contractions or not. Default is True.
         numeric_text_normalization : bool, optional
@@ -207,6 +215,7 @@ class DataPreprocessor:
         -----
         This method applies preprocessing steps to the input text based on the specified parameters.
         """
+        self.remove_short_text(min_len=min_len_short_text)
         if offensive_contractions:
             self.convert_offensive_contractions()
         self.mintlemon_data_preprocessing()

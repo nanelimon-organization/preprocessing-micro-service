@@ -34,6 +34,8 @@ async def preprocess(
     norm_numbers: bool = True,
     remove_numbers: bool = False,
     remove_spaces: bool = True,
+    remove_stopwords: bool = True,
+    min_len: int = None,
 ):
     """
     Preprocess multiple texts using Mintlemon Turkish NLP library.
@@ -61,6 +63,10 @@ async def preprocess(
         - Flag indicating whether to remove numeric text from the input text values, by default False.
     * remove_spaces : bool, optional
         - Flag indicating whether to remove extra spaces from the input text values, by default True.
+    * remove_stopwords : bool, optional
+        - Flag indicating whether to remove stopwords from the input text values, by default True.
+    * min_len : int, optional
+        - The minimum length of text values to be considered as short text values, by default None.
 
     Returns
     -------
@@ -83,10 +89,12 @@ async def preprocess(
                 lowercase=lower,
                 remove_numbers=remove_numbers,
                 remove_more_space=remove_spaces,
+                remove_stopwords=remove_stopwords,
             )
             result = preprocessor.preprocess(
                 offensive_contractions=offensive,
                 numeric_text_normalization=norm_numbers,
+                min_len_short_text=min_len,
             )
             results.append(result)
         return {"result": results}
