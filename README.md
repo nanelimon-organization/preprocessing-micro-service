@@ -164,11 +164,7 @@ print(preprocessed_texts)
 <img width="1407" alt="Ekran Resmi 2023-04-04 08 08 41" src="https://user-images.githubusercontent.com/83168207/229692532-df18615f-dc36-466c-96a1-e65ef7112d4e.png">| <img width="1581" alt="Ekran Resmi 2023-04-04 08 35 38" src="https://user-images.githubusercontent.com/83168207/229697301-92c3d03c-8f3a-4f27-9fa4-2dcca735a257.png">
 
 
----
-
-## Sonuç
-
-Sonuç olarak, Preprocessing Service, Türkçe metinlerin veri ön işleme adımlarından geçirilmesini sağlayarak doğru ve tutarlı bir şekilde analiz edilmelerine olanak tanır. API, tek bir metin veya birden fazla metin içeren bir liste alarak her metin için belirtilen ön işleme adımlarını uygulayarak sonucu JSON formatında döndürür. Ayrıca, API'nin sunduğu parametreler, kullanıcıların veri ön işleme adımlarını esnek bir şekilde yapılandırmasına olanak tanır.
+**Preprocessing Service**, Türkçe metinlerin veri ön işleme adımlarından geçirilmesini sağlayarak doğru ve tutarlı bir şekilde analiz edilmelerine olanak tanır. API, tek bir metin veya birden fazla metin içeren bir liste alarak her metin için belirtilen ön işleme adımlarını uygulayarak sonucu JSON formatında döndürür. Ayrıca, API'nin sunduğu parametreler, kullanıcıların veri ön işleme adımlarını esnek bir şekilde yapılandırmasına olanak tanır.
 
 ---
 
