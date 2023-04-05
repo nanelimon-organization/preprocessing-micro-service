@@ -172,3 +172,119 @@ Sonuç olarak, Preprocessing Service, Türkçe metinlerin veri ön işleme adım
 
 ---
 
+
+## Preprocessing Service’ in Parametrik Yapısının Model Üzerindeki Etkisinin Araştırılması
+
+[Preprocessing Service](https://cryptic-oasis-68424.herokuapp.com/docs)'nin parametrik yapısı kullanılarak, `teknofest_train_final.csv` veri kümesi %80 eğitim ve %20 test olarak bölünmüş ve baseline bir modelin hangi veri ön işleme adımları kullanıldığında daha iyi sonuçlar verdiği belirlenmiştir. Bu doğrultuda parametre tuning çalışmaları yürütülmüştür. Model tercihi olarak dbmdz/bert-base-turkish-uncased kullanıldı. Model parametreleri arasında **max_length**: 64, **batch_size**: 32, **learning_rate**: 5e-5, **optimizer**: AdamW, **eps**: 1e-8 ve **epoch**: 8 bulunmaktadır.
+Modelin uncased seçilme nedeni veri seti incelendiğinde yer yer büyük harf ile başlayan yer yer küçük harf ile başlayan kelimelerin olması ve büyük küçük harf kuralına doğru bir şekilde uyulmaması nedeniyle bu kuralın görmezden gelinmesinin sağlanmasıdır. 
+Model minlemon_preprocessing parametresi ile veri ön işleme yaparken kullandığı adımlardan biri de bütün harfları lower case hale getirmektir. Bu işlem büyük küçük harf uyumuna dikkat edilen veri setlerinde (Genellikle haber veya akademik çalışmalar) yapılmayarak modelin dbmdz/bert-base-turkish-cased versiyonu kullanılmaktadır. Bu sayede uncased a göre genellikle daha iyi sonuçlar üretmektedir.
+
+
+### Case [1]: Türkçe karakterlerin kullanımının ve ya kaldırılmasının model performansına etkisi 
+
+Bu denemede, 
+- Türkçe karakter içeren model ile içermeyen modelin başarısı karşılaştırıldı. 
+- Türkçe Karakter Destekli Preprocessing Service ile veri ön işleme adımları belirlendi. 
+- **tr_chars** parametresi False olarak ayarlandı ve Türkçe karakterlerin kullanılması sağlandı. 
+- **acc_marks** parametresine True verilerek ASCII karakterler Türkçeye uygun hale getirildi. 
+- **punct** parametresine True verilerek noktalama işaretleri kaldırıldı. 
+- **lower** parametresine True verilerek tüm harfler küçük hale getirildi. 
+- **remove_spaces** parametresine True verilerek fazla boşluklar giderildi. 
+- **offensive** parametresine false değeri verilerek kısaltılmış/sansürlenmiş argo ve saldırgan kelimelerin orjinal haline dönüştürülmesi sağlandı. 
+- **norm_numbers** false olarak belirlendi ve sayılar normalize edilmedi. 
+- **remove_numbers** parametresi true olarak ayarlandı ve sayılar metinden kaldırıldı. 
+- **remove_spaces** parametresi true ile fazla boşluklar ortadan kaldırıldı. 
+- **remove_stopwords** false değeriyle durdurma kelimelerinin korunması sağlandı. 
+
+Bu parametrelerle mintlemon-turkish-nlp kütüphanesi kullanılarak veri seti ön işleme işlemi gerçekleştirildi ve dbmdz/bert-base-turkish-uncased modeli ile modelleme yapıldı. Ayrıca, **min_len** parametresine 4 verilerek veri setindeki 4'ten küçük karakterli verilerin kaldırılması sağlandı.
+
+
+<img width="777" alt="Ekran Resmi 2023-04-04 23 40 52" src="https://user-images.githubusercontent.com/83168207/229915456-fa98d251-b952-421a-ac54-bffa8e87b481.png"> |
+
+Bu denemede, 
+- Belirtilen parametrelerle veri ön işleme adımları gerçekleştirildi. 
+- **tr_chars** parametresine true değeri verilerek Türkçe karakterlerin kaldırılması sağlandı. 
+- **acc_marks** ile ASCII karakterler Türkçeye uygun hale getirildi. 
+- **punct** parametresi true olarak belirlendi ve böylece noktalama işaretleri kaldırıldı. 
+- **lower** parametresine true verilerek tüm harfler küçük hale getirildi.
+- **offensive** parametresine false değeri verilerek kısaltılmış/sansürlenmiş argo ve saldırgan kelimelerin orjinal haline dönüştürülmesi sağlandı. 
+- **norm_numbers** false olarak belirlendi ve sayılar normalize edilmedi. 
+- **remove_numbers** parametresi true olarak ayarlandı ve sayılar metinden kaldırıldı. 
+- **remove_spaces** parametresi true ile fazla boşluklar ortadan kaldırıldı. 
+- **remove_stopwords** false değeriyle durdurma kelimelerinin korunması sağlandı. 
+- **min_len** parametresine 4 verilerek veri setinde 4'ten küçük karakterli verilerin kaldırılması sağlandı. 
+Bu parametrelerle gerçekleştirilen ön işleme adımları sonucunda veri seti hazırlandı.
+
+
+<img width="777" alt="Ekran Resmi 2023-04-05 00 49 43" src="https://user-images.githubusercontent.com/78956836/229930412-0bb9ae0b-20a2-4d6f-9636-5e523d1566f1.png">
+
+İlk iki case incelendiğinde alınan sonuçlar aşağıdaği tabloda gösterilmektedir. Bu tabloya göre aynı model kullanıldığında Türkçe karakter ile yapılan eğitim Türkçe karakterin kaldırılmış olduğu durumda yapılan eğitime göre daha başarılı sonuçlar vermektedir.
+
+|        | tr_char:True | tr_char:False | 
+| ------ | ------  | ------ | 
+| F1 Score | 0.94735 | 0.9396 | 
+
+
+### Case [2]: Türkçe Karakterli Metinlerde Sayıların Model Performansına Etkisi:
+
+Bu denemede başarılı oldugunu bildiğimiz Türkçe karakterli veri seti kullanılarak, numeric değerleri kaldırdığımız da mı yoksa aynen bıraktıgımızda mı ya da Türkçe olarak yazıya dönüştürdüğümüzde mi daha iyi sonuç aldıgımızı tespit etmeye çalışacağız.
+
+Bunun için 3 preprocessing isteği ayrı ayrı denendi.
+
+- A. Sayıları corpustan çıkarmak.
+- B. Sayıları corpusta numerik olarak bırakmak.
+- C. Sayıları mintlemon-nlp-turkish kütüphanesine ait convert_text_numbers fonksiyonu ile numerik sayıları text sayılara dönüştürmek.
+
+Bu denemelerden alınan sonuçlara göre aşağıdaki tablo çıkarılmıştır.
+
+|        | A denemesi | B denemesi | C Denemesi|
+| ------ | ------  | ------ | ------ | 
+| F1 Score | 0.94735 | 0.9516 | 0.9526 |
+
+Tabloda gösterilen sonuca bakıldığında numerik degerlerin kaldırılması performansı olumlu etkilemektedir. Fakat Sayıların kaldırılması yerine sayıların metinleştirilmesi çok daha iyi bir performans elde edilmesine neden olmaktadır. (Bu kıyas bu çalışma kapsamında ortaya çıkarmış olduğumuz [mintlemon-nlp-turkish](https://pypi.org/project/mintlemon-turkish-nlp/#description) kütüphanesinin Türkçe doğal dil işlemeye katkısıdır.)
+
+
+### Case [3]: Sayıların Metine Dönüştürüldüğü Türkçe Karakterli Metinlerde, Kısaltma İçeren Küfürlerin Orjinale Dönüştürülmesinin Model Performansına Etkisi:
+
+Bu case denemesinin amacı bazı küfür veya hakaretlerin çeşitli varyanslarını ve noktalama işaretleri ile sansürlenmiş hallerini orjinal haline çevirerek ve diğer case denemelerine göre en başarılı veri seti kullanılarak, küfürlü kelimelerde geçen noktalama işaretlerinin  orjinal haline dönüşümünün etkisini inceledik. 
+
+Ön işleme adımlarında, 
+- Türkçe karakterlerin korunması, 
+- ASCII karakterlerin Türkçeye uygun hale getirilmesi, 
+- noktalama işaretlerinin kaldırılması, 
+- tüm harflerin küçük hale getirilmesi, 
+- küfürlü kelimelerin korunması, 
+- sayıların normalleştirilmesi, 
+- metindeki sayıların korunması, 
+- fazla boşlukların kaldırılması, 
+- durdurma kelimelerinin korunması ve 4'ten küçük karakterli verilerin kaldırılması sağlandı.
+
+Bu parametrelerle yapılan ön işleme sonucunda, küfürlü kelimelerin noktalama işaretlerinin dönüşümü üzerindeki etki analiz edildi. Model confusion matrisi aşağıda yer almaktadır. Bu Matrise göre; Küfürlü kelimeleri orijinal haliyle değiştirmenin iyi bir fikir olmadığı sonucuna varıldı.
+
+<img width="777" alt="Ekran Resmi 2023-04-05 01 00 23" src="https://user-images.githubusercontent.com/78956836/229932374-bd223605-6b72-4761-9c5a-f14e0451cca0.png">
+
+|        | offensive:True | offensive:False | 
+| ------ | ------  | ------ | 
+| F1 Score | 0.9449 | 0.9526 | 
+
+
+### Case [4]: Sayıların Metine Dönüştürüldüğü Türkçe Karakterli Metinlerde, Stopwordslerin Kaldırılmasının Model Performansına Etkisi:
+
+Türkçe doğal dil işleme çalışmalarında stopwordslerin kaldırılması model başarısına önemi herkesce billinen ve sıklıkla kullanılan bir yöntemdir. Bu nedenle preprocessing service içerisinde yer alan stopwords lerin kullanımının BERT üzerindeki etkisini elimizdeki veri setine göre değerlendirdik.
+
+
+<img width="777" alt="Ekran Resmi 2023-04-05 01 06 53" src="https://user-images.githubusercontent.com/78956836/229933321-3edf652e-7e17-4057-b37e-c97b4385cb01.png">
+
+Aşağıdaki tabloda stopwords: true ve stopwords: false durumlarının f1 skor değerlendirmesine göre sonuçları tablo halinde gösterilmektedir.
+|        | stopwords:True | stopwords:False | 
+| ------ | ------  | ------ | 
+| F1 Score | 0.9375 | 0.9526 | 
+
+Çalışmada elde ettiğimiz sonuçlar, durdurma kelimelerinin kaldırılmasının, cümlelerin anlam bütünlüğünü olumsuz etkilediğini ve BERT gibi encoder temelli derin öğrenme modellerinde başarıyı önemli ölçüde düşürdüğünü göstermektedir. Bu nedenle, dil modellemesi projelerinde durdurma kelimelerini muhafaza etmeyi düşünmelisiniz.
+
+### Sonuç
+
+4 case altında incelenmiş olan BERT gibi encoder tabanlı modellerde preprocessing işlemleri göz önünde bulundurularak en iyi sonucun Türkçe karakter destekli, sayıların metine dönüştürüldüğü, noktalama içeren küfürlerin orjinale dönüştürülmediği ve stopwordslerin kaldırılmadığı preprocessing service isteği: https://cryptic-oasis-68424.herokuapp.com/preprocess?tr_chars=false&acc_marks=true&punct=true&lower=true&offensive=false&norm_numbers=true&remove_numbers=false&remove_spaces=true&remove_stopwords=false&min_len=4 olarak belirlenmiştir(F1-Macro = %95.2641). 
+**Bu model için yapılacak bütün hyper parametre çalışmaları bu ön işleme adımlarından geçirilecektir.**
+
+
