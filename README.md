@@ -9,40 +9,7 @@ Preprocessing Micro Service - Mintlemon Turkish NLP kütüphanesi kullanılarak 
 
 Ayrıca, FastAPI kullanılarak oluşturulan bir API tarafından desteklenmektedir. API, tek bir metin veya birden fazla metin içeren bir liste alır ve her metin için belirtilen ön işleme adımlarını uygular. API'nin `preprocess` endpoint'i, birden fazla metni aynı anda işlemek için kullanılır ve sonuçları JSON formatında döndürür.
 
-## Gereksinimler
-
-### Ortam
-
-Lütfen Python sürümünüzü `3.10` olarak ayarlayın:
-
-```bash
-python --version
-```
-
-- Virtualenv kurulumu:
-```bash
-pip install virtualenv
-```
-- Virtualenv oluşturma:
-```bash
-virtualenv venv
-```
-- Virtualenv'i aktif hale getirme:
-```bash
-source venv/bin/activate
-```
-- Kütüphanelerin kurulumu:
-```bash
-pip install -r requirements.txt
-```
-
-## Uygulamayı Çalıştırma
-
-```python
-python main.py
-```
-
---- 
+---
 
 ### Veri Ön İşleme Fonksiyonları
 
@@ -154,9 +121,9 @@ print(preprocessed_texts)
 
 ## Preprocess | Endpoint
 
+Sonuç olarak **Preprocessing Service** API, Türkçe metinlerin veri ön işleme adımlarından geçirilmesini sağlayarak daha doğru ve tutarlı bir şekilde analiz edilmelerine olanak tanır. API, tek bir metin veya birden fazla metin içeren bir liste alarak her metin için belirtilen ön işleme adımlarını uygulayarak sonucu JSON formatında döndürür. Bu sayede, doğal dil işleme uygulamalarında kullanılmak üzere tasarlanmış bir veri ön işleme hizmeti sunulur. Ayrıca, API'nin sunduğu esnek parametreler sayesinde, veri ön işleme adımları özelleştirilebilir ve kullanıcılar, ihtiyaçlarına göre özelleştirilmiş veri ön işleme işlemleri yapabilirler.
 
 <img width="1423" alt="Ekran Resmi 2023-04-04 08 04 12" src="https://user-images.githubusercontent.com/83168207/229692297-c4f6f88c-36f5-49e6-8c16-1caf8b234d55.png">
-
 
 
   İstek Gövdesi - Boş      |  Yanıt Gövdesi - Örnek
@@ -164,10 +131,7 @@ print(preprocessed_texts)
 <img width="1407" alt="Ekran Resmi 2023-04-04 08 08 41" src="https://user-images.githubusercontent.com/83168207/229692532-df18615f-dc36-466c-96a1-e65ef7112d4e.png">| <img width="1581" alt="Ekran Resmi 2023-04-04 08 35 38" src="https://user-images.githubusercontent.com/83168207/229697301-92c3d03c-8f3a-4f27-9fa4-2dcca735a257.png">
 
 
-**Preprocessing Service**, Türkçe metinlerin veri ön işleme adımlarından geçirilmesini sağlayarak doğru ve tutarlı bir şekilde analiz edilmelerine olanak tanır. API, tek bir metin veya birden fazla metin içeren bir liste alarak her metin için belirtilen ön işleme adımlarını uygulayarak sonucu JSON formatında döndürür. Ayrıca, API'nin sunduğu parametreler, kullanıcıların veri ön işleme adımlarını esnek bir şekilde yapılandırmasına olanak tanır.
-
 ---
-
 
 ## Preprocessing Service’ in Parametrik Yapısının Model Üzerindeki Etkisinin Araştırılması
 
@@ -283,4 +247,41 @@ Aşağıdaki tabloda stopwords: true ve stopwords: false durumlarının f1 skor 
 4 case altında incelenmiş olan BERT gibi encoder tabanlı modellerde preprocessing işlemleri göz önünde bulundurularak en iyi sonucun Türkçe karakter destekli, sayıların metine dönüştürüldüğü, noktalama içeren küfürlerin orjinale dönüştürülmediği ve stopwordslerin kaldırılmadığı preprocessing service isteği: https://cryptic-oasis-68424.herokuapp.com/preprocess?tr_chars=false&acc_marks=true&punct=true&lower=true&offensive=false&norm_numbers=true&remove_numbers=false&remove_spaces=true&remove_stopwords=false&min_len=4 olarak belirlenmiştir(F1-Macro = %95.2641). 
 **Bu model için yapılacak bütün hyper parametre çalışmaları bu ön işleme adımlarından geçirilecektir.**
 
+--- 
+
+
+## Gereksinimler
+
+### Ortam
+
+Lütfen Python sürümünüzü `3.10` olarak ayarlayın:
+
+```bash
+python --version
+```
+
+- Virtualenv kurulumu:
+```bash
+pip install virtualenv
+```
+- Virtualenv oluşturma:
+```bash
+virtualenv venv
+```
+- Virtualenv'i aktif hale getirme:
+```bash
+source venv/bin/activate
+```
+- Kütüphanelerin kurulumu:
+```bash
+pip install -r requirements.txt
+```
+
+## Uygulamayı Çalıştırma
+
+```python
+python main.py
+```
+
+--- 
 
