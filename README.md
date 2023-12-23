@@ -242,11 +242,6 @@ Aşağıdaki tabloda stopwords: true ve stopwords: false durumlarının f1 skor 
 
 Çalışmada elde ettiğimiz sonuçlar, durdurma kelimelerinin kaldırılmasının, cümlelerin anlam bütünlüğünü olumsuz etkilediğini ve BERT gibi encoder temelli derin öğrenme modellerinde başarıyı önemli ölçüde düşürdüğünü göstermektedir. Bu nedenle, dil modellemesi projelerinde durdurma kelimelerini muhafaza etmeyi düşünmelisiniz.
 
-### Sonuç
-
-4 case altında incelenmiş olan BERT gibi encoder tabanlı modellerde preprocessing işlemleri göz önünde bulundurularak en iyi sonucun Türkçe karakter destekli, sayıların metine dönüştürüldüğü, noktalama içeren küfürlerin orjinale dönüştürülmediği ve stopwordslerin kaldırılmadığı preprocessing service isteği: https://cryptic-oasis-68424.herokuapp.com/preprocess?tr_chars=false&acc_marks=true&punct=true&lower=true&offensive=false&norm_numbers=true&remove_numbers=false&remove_spaces=true&remove_stopwords=false&min_len=4 olarak belirlenmiştir(F1-Macro = %95.2641). 
-**Bu model için yapılacak bütün hyper parametre çalışmaları bu ön işleme adımlarından geçirilecektir.**
-
 --- 
 
 
